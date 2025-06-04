@@ -1,0 +1,86 @@
+import 'dart:developer';
+
+import 'package:coffeeapp/Entity/Product.dart';
+import 'package:coffeeapp/Entity/ads.dart';
+import 'package:coffeeapp/Entity/categoryproduct.dart';
+import 'package:coffeeapp/Entity/global_data.dart';
+import 'package:coffeeapp/Entity/tablestatus.dart';
+import 'package:coffeeapp/Entity/userdetail.dart';
+import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
+import 'package:coffeeapp/UI/Login_Register/coffeeloginregisterscreen.dart';
+import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  String _version = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+    _startDelay();
+  }
+
+  Future<void> _startDelay() async {
+    log('Start');
+
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => CoffeeLoginRegisterScreen()),
+      );
+    });
+  }
+
+  void _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = 'v${info.version}';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/background/anime-coffee-shop-illustration.jpg',
+            fit: BoxFit.cover,
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.4), // optional overlay
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "☕ Cà phê Đậu Chill",
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [Shadow(color: Colors.black, blurRadius: 8)],
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                _version,
+                style: TextStyle(fontSize: 16, color: Colors.white70),
+              ),
+              Center(child: CircularProgressIndicator()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
