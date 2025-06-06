@@ -253,211 +253,193 @@ class _UserInformationState extends State<UserInformation> {
                     const SizedBox(height: 10),
 
                     // BODY
-                    Container(
-                      height: MediaQuery.of(context).size.height,
-                      padding: const EdgeInsets.all(16),
-
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            buildSectionTitle("☕ Tổng Quan"),
-                            ListTile(
-                              leading: const Icon(Icons.shopping_cart),
-                              title: const Text("Tổng đơn hàng đã đặt"),
-                              trailing: Text("$totalOrders"),
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.local_cafe),
-                              title: const Text("Tổng nước uống đã uống"),
-                              trailing: Text("$totalDrinks"),
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.payment),
-                              title: const Text("Tổng tiền đã thanh toán"),
-                              trailing: Text(
-                                "${format.format(totalPayment)} đ",
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-                            buildSectionTitle("☕ Nước Uống Đã Thử"),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: drinkList.map((drink) {
-                                return Chip(
-                                  label: Text(drink),
-                                  backgroundColor: Colors.brown[100],
-                                  avatar: const Icon(Icons.coffee, size: 16),
-                                );
-                              }).toList(),
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                buildSectionTitle("🎖️ Tiến Trình Hạng"),
-                                SizedBox(width: 10),
-                                Image.asset(
-                                  ranks.entries.elementAt(currentRank).value,
-                                  width: 30,
-                                  height: 30,
-                                  fit: BoxFit.cover,
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                              ),
-                              child: Stack(
-                                children: [
-                                  // Background bar
-                                  Container(
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
-
-                                  // Foreground progress with AnimateGradient
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: FractionallySizedBox(
-                                        widthFactor: rankProgress.clamp(
-                                          0,
-                                          1,
-                                        ), // Progress width
-                                        child: AnimateGradient(
-                                          primaryColors: rankGradients.entries
-                                              .elementAt(currentRank)
-                                              .value
-                                              .entries
-                                              .first
-                                              .value,
-                                          secondaryColors: rankGradients.entries
-                                              .elementAt(currentRank)
-                                              .value
-                                              .entries
-                                              .last
-                                              .value,
-                                          duration: const Duration(seconds: 4),
-                                          primaryBegin: Alignment.centerLeft,
-                                          primaryEnd: Alignment.centerRight,
-                                          secondaryBegin: Alignment.centerRight,
-                                          secondaryEnd: Alignment.centerLeft,
-                                          child: Container(height: 10),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              "Điểm còn lại để đạt hạng tiếp theo (${ranks.entries.elementAt(nextRank).key}): $pointsToNext điểm",
-                              style: const TextStyle(fontSize: 14),
-                            ),
-
-                            const SizedBox(height: 10),
-                            Column(
-                              children: [
-                                buildSectionTitle("🎁 Phiếu Giảm Giá"),
-                                ScrollConfiguration(
-                                  behavior: ScrollConfiguration.of(context)
-                                      .copyWith(
-                                        dragDevices: {
-                                          PointerDeviceKind.touch,
-                                          PointerDeviceKind.mouse,
-                                        },
-                                      ),
-                                  child: SizedBox(
-                                    height: 500, // fixed height for the list
-                                    child: ListView.builder(
-                                      itemCount: coupons.length,
-                                      itemBuilder: (context, index) {
-                                        final coupon = coupons[index];
-                                        return Container(
-                                          margin: const EdgeInsets.symmetric(
-                                            vertical: 6,
-                                          ),
-                                          padding: const EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                            color: Colors.green[50],
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            border: Border.all(
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.local_offer,
-                                                color: Colors.green,
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Expanded(
-                                                child: Text(
-                                                  coupon,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                    buildSectionTitle("☕ Tổng Quan"),
+                    ListTile(
+                      leading: const Icon(Icons.shopping_cart),
+                      title: const Text("Tổng đơn hàng đã đặt"),
+                      trailing: Text("$totalOrders"),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.local_cafe),
+                      title: const Text("Tổng nước uống đã uống"),
+                      trailing: Text("$totalDrinks"),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.payment),
+                      title: const Text("Tổng tiền đã thanh toán"),
+                      trailing: Text("${format.format(totalPayment)} đ"),
                     ),
 
-                    // Update password
+                    const SizedBox(height: 10),
+                    buildSectionTitle("☕ Nước Uống Đã Thử"),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: drinkList.map((drink) {
+                        return Chip(
+                          label: Text(drink),
+                          backgroundColor: Colors.brown[100],
+                          avatar: const Icon(Icons.coffee, size: 16),
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        buildSectionTitle("🎖️ Tiến Trình Hạng"),
+                        SizedBox(width: 10),
+                        Image.asset(
+                          ranks.entries.elementAt(currentRank).value,
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        ),
+                      ],
+                    ),
                     Padding(
-                      padding: EdgeInsetsGeometry.only(top: 10, bottom: 40),
-                      child: Center(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Change password logic
-                          },
-                          icon: const Icon(Icons.lock_outline),
-                          label: const Text("Thay đổi mật khẩu"),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: const Color.fromARGB(
-                              255,
-                              102,
-                              52,
-                              240,
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Stack(
+                        children: [
+                          // Background bar
+                          Container(
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                            backgroundColor: const Color.fromARGB(
-                              255,
-                              245,
-                              244,
-                              185,
+                          ),
+
+                          // Foreground progress with AnimateGradient
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: FractionallySizedBox(
+                                widthFactor: rankProgress.clamp(
+                                  0,
+                                  1,
+                                ), // Progress width
+                                child: AnimateGradient(
+                                  primaryColors: rankGradients.entries
+                                      .elementAt(currentRank)
+                                      .value
+                                      .entries
+                                      .first
+                                      .value,
+                                  secondaryColors: rankGradients.entries
+                                      .elementAt(currentRank)
+                                      .value
+                                      .entries
+                                      .last
+                                      .value,
+                                  duration: const Duration(seconds: 4),
+                                  primaryBegin: Alignment.centerLeft,
+                                  primaryEnd: Alignment.centerRight,
+                                  secondaryBegin: Alignment.centerRight,
+                                  secondaryEnd: Alignment.centerLeft,
+                                  child: Container(height: 10),
+                                ),
+                              ),
                             ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      "Điểm còn lại để đạt hạng tiếp theo (${ranks.entries.elementAt(nextRank).key}): $pointsToNext điểm",
+                      style: const TextStyle(fontSize: 14),
+                    ),
+
+                    const SizedBox(height: 10),
+                    Column(
+                      children: [
+                        buildSectionTitle("🎁 Phiếu Giảm Giá"),
+                        ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context).copyWith(
+                            dragDevices: {
+                              PointerDeviceKind.touch,
+                              PointerDeviceKind.mouse,
+                            },
+                          ),
+                          child: SingleChildScrollView(
+                            child: SizedBox(
+                              height: 200, // fixed height for the list
+                              child: ListView.builder(
+                                itemCount: coupons.length,
+                                itemBuilder: (context, index) {
+                                  final coupon = coupons[index];
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                    ),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green[50],
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.green),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.local_offer,
+                                          color: Colors.green,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            coupon,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
+
+                        Padding(
+                          padding: EdgeInsetsGeometry.only(top: 10, bottom: 20),
+                          child: Center(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                // Change password logic
+                              },
+                              icon: const Icon(Icons.lock_outline),
+                              label: const Text("Thay đổi mật khẩu"),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: const Color.fromARGB(
+                                  255,
+                                  102,
+                                  52,
+                                  240,
+                                ),
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  245,
+                                  244,
+                                  185,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+
+                    // Update password
                   ],
                 ),
               ),

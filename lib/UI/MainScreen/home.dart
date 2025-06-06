@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:coffeeapp/Entity/ads.dart';
 import 'package:coffeeapp/Entity/categoryproduct.dart';
+import 'package:coffeeapp/Entity/productfavourite.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/CustomCard/productcard_categorymain.dart';
@@ -36,6 +37,7 @@ class _HomeState extends State<Home> {
   late int indexCategory;
   late List<Product> productsCategory = [];
   late List<CategoryProduct> categories = [];
+  late List<Product> favouriteProduct = [];
   late List<Ads> ads = [];
   var logger = Logger();
   @override
@@ -59,6 +61,18 @@ class _HomeState extends State<Home> {
       categories[indexCategory].name,
     );
     ads = await FirebaseDBManager.adsService.getAds();
+
+    List<ProductFavourite> favouriteList = await FirebaseDBManager
+        .favouriteService
+        .getFavouritesByEmail(GlobalData.userDetail.email);
+
+    for (ProductFavourite fav in favouriteList) {
+      favouriteProduct.add(
+        await FirebaseDBManager.productService.getProductByName(
+          fav.productName,
+        ),
+      );
+    }
   }
 
   Future<void> LoadProductWithCategory() async {
@@ -364,7 +378,7 @@ class _HomeState extends State<Home> {
                           Text("Những nước uống khuyến khích nên chọn"),
                           SizedBox(height: 5),
                           SizedBox(
-                            height: 600,
+                            height: 400,
                             child: ScrollConfiguration(
                               behavior: ScrollConfiguration.of(context)
                                   .copyWith(
@@ -378,6 +392,37 @@ class _HomeState extends State<Home> {
                                 itemBuilder: (context, index) {
                                   final product =
                                       productTop10HighRatingList[index];
+                                  return ProductcardRecommended(
+                                    product: product,
+                                    isDark: widget.isDark,
+                                    index: 0,
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      /// Favourite PRODUCT LIST
+                      Column(
+                        children: [
+                          Text("Những nước uống mà bạn thích"),
+                          SizedBox(height: 5),
+                          SizedBox(
+                            height: 400,
+                            child: ScrollConfiguration(
+                              behavior: ScrollConfiguration.of(context)
+                                  .copyWith(
+                                    dragDevices: {
+                                      PointerDeviceKind.touch,
+                                      PointerDeviceKind.mouse,
+                                    },
+                                  ),
+                              child: ListView.builder(
+                                itemCount: favouriteProduct.length,
+                                itemBuilder: (context, index) {
+                                  final product = favouriteProduct[index];
                                   return ProductcardRecommended(
                                     product: product,
                                     isDark: widget.isDark,
