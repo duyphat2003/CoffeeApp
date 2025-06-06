@@ -9,4 +9,5 @@ class TableInDatabase {
   static String get ProductsTable => 'Products';
   static String get TableStatusTable => 'Table';
   static String get UserDetailTable => 'UserDetail';
+  static String get CouponTable => 'Coupon';
 }

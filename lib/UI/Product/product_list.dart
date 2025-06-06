@@ -1,12 +1,9 @@
 import 'dart:ui';
 
-import 'package:coffeeapp/Entity/categoryproduct.dart';
-import 'package:coffeeapp/Entity/productfavourite.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/CustomCard/productcard_list.dart';
 import 'package:coffeeapp/Entity/Product.dart';
-import 'package:coffeeapp/Entity/global_data.dart';
 import 'package:coffeeapp/Transition/menunavigationbar.dart';
 
 // ignore: must_be_immutable
@@ -51,7 +48,6 @@ class _ProductListState extends State<ProductList> {
   @override
   void initState() {
     super.initState();
-    LoadData();
   }
 
   // ignore: non_constant_identifier_names

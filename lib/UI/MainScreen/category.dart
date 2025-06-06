@@ -1,10 +1,8 @@
 import 'dart:ui';
 
-import 'package:coffeeapp/Entity/productfavourite.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/Entity/categoryproduct.dart';
-import 'package:coffeeapp/Entity/global_data.dart';
 import 'package:coffeeapp/UI/Product/product_list.dart';
 
 // ignore: must_be_immutable
@@ -24,7 +22,6 @@ class _CategoryState extends State<Category> {
   @override
   void initState() {
     super.initState();
-    LoadData();
   }
 
   // ignore: non_constant_identifier_names

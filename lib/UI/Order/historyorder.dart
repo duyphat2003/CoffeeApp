@@ -1,6 +1,4 @@
-import 'package:coffeeapp/Entity/Product.dart';
-import 'package:coffeeapp/Entity/categoryproduct.dart';
-import 'package:coffeeapp/Entity/productfavourite.dart';
+import 'package:coffeeapp/Entity/cartitem.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/CustomCard/orderItemcard%20.dart';
@@ -22,15 +20,21 @@ class _HistoryOrderState extends State<HistoryOrder> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    LoadData();
   }
 
   late List<OrderItem> orderItemList = [];
+  late List<CartItem> cartItemList = [];
   // ignore: non_constant_identifier_names
   Future<void> LoadData() async {
     orderItemList = await FirebaseDBManager.orderService.getOrdersByEmail(
       GlobalData.userDetail.email,
     );
+
+    for (OrderItem orderItem in orderItemList) {
+      cartItemList.addAll(
+        await FirebaseDBManager.cartService.getCartItemsByOrder(orderItem.id),
+      );
+    }
   }
 
   @override
@@ -58,14 +62,14 @@ class _HistoryOrderState extends State<HistoryOrder> {
             );
           }, // Add navigation logic
         ),
-        title: Text('Order History'),
+        title: Text('Lịch sử đơn hàng'),
         centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: CircleAvatar(
               backgroundImage: AssetImage(
-                "assets/images/drink/user.png",
+                GlobalData.userDetail.photoURL,
               ), // User image
             ),
           ),
@@ -78,6 +82,9 @@ class _HistoryOrderState extends State<HistoryOrder> {
             itemCount: orderItemList.length, // Change to your data length
             itemBuilder: (context, index) {
               OrderItem orderItem = orderItemList[index];
+              orderItem.cartItems = cartItemList
+                  .where((element) => element.idOrder == orderItem.id)
+                  .toList();
               return OrderItemCard(
                 orderItem: orderItem,
                 isDark: widget.isDark,

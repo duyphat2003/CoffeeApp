@@ -1,4 +1,3 @@
-import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/CustomMethod/executeratingdisplay.dart';
 import 'package:coffeeapp/Entity/Product.dart';
@@ -25,6 +24,7 @@ class ProductcardRecommended extends StatefulWidget {
 
 class _ProductcardRecommendedState extends State<ProductcardRecommended> {
   var format = NumberFormat("#,###", "vi_VN");
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -135,24 +135,44 @@ class _ProductcardRecommendedState extends State<ProductcardRecommended> {
                         amount: 1,
                         size: SizeOption.Small,
                         idOrder: '',
+                        product: widget.product,
                       );
-                      Product productInfo =
-                          FirebaseDBManager.productService.getProductByName(
-                                cartItem.productName,
-                              )
-                              as Product;
+
+                      int id = 0;
+                      while (GlobalData.cartItemList
+                          .where(
+                            (element) =>
+                                element.productName.trim().toLowerCase() ==
+                                    cartItem.product.name
+                                        .trim()
+                                        .toLowerCase() &&
+                                element.size == cartItem.size &&
+                                element.id == id.toString(),
+                          )
+                          .isNotEmpty) {
+                        id++;
+                      }
+
+                      cartItem.id = id.toString();
+
                       if (GlobalData.cartItemList
                           .where(
                             (element) =>
                                 element.productName.trim().toLowerCase() ==
-                                productInfo.name.trim().toLowerCase(),
+                                    cartItem.product.name
+                                        .trim()
+                                        .toLowerCase() &&
+                                element.size == cartItem.size,
                           )
                           .isNotEmpty) {
                         GlobalData.cartItemList
                             .firstWhere(
                               (element) =>
                                   element.productName.trim().toLowerCase() ==
-                                  productInfo.name.trim().toLowerCase(),
+                                      cartItem.product.name
+                                          .trim()
+                                          .toLowerCase() &&
+                                  element.size == cartItem.size,
                             )
                             .amount += cartItem
                             .amount;
@@ -160,9 +180,12 @@ class _ProductcardRecommendedState extends State<ProductcardRecommended> {
                                 .firstWhere(
                                   (element) =>
                                       element.productName
-                                          .trim()
-                                          .toLowerCase() ==
-                                      productInfo.name.trim().toLowerCase(),
+                                              .trim()
+                                              .toLowerCase() ==
+                                          cartItem.product.name
+                                              .trim()
+                                              .toLowerCase() &&
+                                      element.size == cartItem.size,
                                 )
                                 .amount >
                             10) {
@@ -170,9 +193,12 @@ class _ProductcardRecommendedState extends State<ProductcardRecommended> {
                                   .firstWhere(
                                     (element) =>
                                         element.productName
-                                            .trim()
-                                            .toLowerCase() ==
-                                        productInfo.name.trim().toLowerCase(),
+                                                .trim()
+                                                .toLowerCase() ==
+                                            cartItem.product.name
+                                                .trim()
+                                                .toLowerCase() &&
+                                        element.size == cartItem.size,
                                   )
                                   .amount =
                               10;

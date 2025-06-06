@@ -1,12 +1,5 @@
 import 'dart:developer';
 
-import 'package:coffeeapp/Entity/Product.dart';
-import 'package:coffeeapp/Entity/ads.dart';
-import 'package:coffeeapp/Entity/categoryproduct.dart';
-import 'package:coffeeapp/Entity/global_data.dart';
-import 'package:coffeeapp/Entity/tablestatus.dart';
-import 'package:coffeeapp/Entity/userdetail.dart';
-import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:coffeeapp/UI/Login_Register/coffeeloginregisterscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';

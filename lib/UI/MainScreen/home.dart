@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:coffeeapp/Entity/ads.dart';
 import 'package:coffeeapp/Entity/categoryproduct.dart';
-import 'package:coffeeapp/Entity/productfavourite.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/CustomCard/productcard_categorymain.dart';
@@ -42,12 +41,15 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    LoadData();
     indexCategory = 0;
     // productsCategory = products.where((element) => element.type.toString(),);
   }
 
   Future<void> LoadData() async {
+    GlobalData.userDetail = (await FirebaseDBManager.authService.getUserDetail(
+      GlobalData.userDetail.email,
+    ))!;
+
     categories = await FirebaseDBManager.categoryProductService
         .getCategoryProductList();
     productTop10HighRatingList = await FirebaseDBManager.productService
@@ -57,6 +59,12 @@ class _HomeState extends State<Home> {
       categories[indexCategory].name,
     );
     ads = await FirebaseDBManager.adsService.getAds();
+  }
+
+  Future<void> LoadProductWithCategory() async {
+    productsCategory = await FirebaseDBManager.productService.getProductsByType(
+      categories[indexCategory].name,
+    );
   }
 
   @override
@@ -291,13 +299,9 @@ class _HomeState extends State<Home> {
                                 width: itemWidth,
                                 child: GestureDetector(
                                   onTap: () {
-                                    setState(() async {
+                                    setState(() {
                                       indexCategory = index;
-                                      productsCategory = await FirebaseDBManager
-                                          .productService
-                                          .getProductsByType(
-                                            categories[indexCategory].name,
-                                          );
+                                      LoadProductWithCategory();
                                     });
                                   },
                                   child: Card(
@@ -305,7 +309,7 @@ class _HomeState extends State<Home> {
                                       horizontal: 4,
                                       vertical: 8,
                                     ),
-                                    color: indexCategory == index
+                                    color: index == indexCategory
                                         ? Colors.green.shade100
                                         : Colors.blue.shade100,
                                     child: Center(

@@ -24,6 +24,19 @@ class AuthService {
     await _userRef.doc(email).delete();
   }
 
+  Future<void> updateUserPointAndRank(
+    String email,
+    int newPoint,
+    String? newRank,
+  ) async {
+    final Map<String, dynamic> updates = {'point': newPoint};
+    if (newRank != null) {
+      updates['rank'] = newRank;
+    }
+
+    await _userRef.doc(email).update(updates);
+  }
+
   Future<void> updateUserPasswordInFirestore(
     String email,
     String newPassword,

@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:coffeeapp/CustomMethod/generateCouponCode.dart';
+import 'package:coffeeapp/Entity/coupon.dart';
 import 'package:coffeeapp/Entity/global_data.dart';
 import 'package:coffeeapp/Entity/userdetail.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
@@ -51,7 +53,6 @@ class _CoffeeLoginRegisterScreenState extends State<CoffeeLoginRegisterScreen> {
             _controller.setVolume(0);
             _controller.play();
           });
-    LoadData();
   }
 
   Future<void> LoadData() async {
@@ -77,8 +78,6 @@ class _CoffeeLoginRegisterScreenState extends State<CoffeeLoginRegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    LoadData();
-
     return Stack(
       children: [
         /// Background video
@@ -97,60 +96,67 @@ class _CoffeeLoginRegisterScreenState extends State<CoffeeLoginRegisterScreen> {
         /// Foreground Content
         Scaffold(
           backgroundColor: Colors.black.withOpacity(0.3), // translucent overlay
-          body: SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: Center(
-                    child: Text(
-                      '☕ Cà phê Đậu Chill',
-                      style: TextStyle(
-                        fontSize: 32,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        shadows: [Shadow(color: Colors.black, blurRadius: 5)],
+          body: FutureBuilder<void>(
+            future: LoadData(),
+            builder: (context, asyncSnapshot) {
+              return SafeArea(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24.0),
+                      child: Center(
+                        child: Text(
+                          '☕ Cà phê Đậu Chill',
+                          style: TextStyle(
+                            fontSize: 32,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(color: Colors.black, blurRadius: 5),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context).copyWith(
-                      dragDevices: {
-                        PointerDeviceKind.touch,
-                        PointerDeviceKind.mouse,
-                      },
+                    Expanded(
+                      child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context).copyWith(
+                          dragDevices: {
+                            PointerDeviceKind.touch,
+                            PointerDeviceKind.mouse,
+                          },
+                        ),
+                        child: PageView(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            if (_currentPage != index) {
+                              if (index == 0) {
+                                LoadData();
+                                clearRegisterFields(); // Swiped to Login
+                              } else {
+                                LoadData();
+                                clearLoginFields(); // Swiped to Register
+                              }
+                              _currentPage = index;
+                            }
+                          },
+                          children: [_buildLoginForm(), _buildRegisterForm()],
+                        ),
+                      ),
                     ),
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        if (_currentPage != index) {
-                          if (index == 0) {
-                            LoadData();
-                            clearRegisterFields(); // Swiped to Login
-                          } else {
-                            LoadData();
-                            clearLoginFields(); // Swiped to Register
-                          }
-                          _currentPage = index;
-                        }
-                      },
-                      children: [_buildLoginForm(), _buildRegisterForm()],
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        _currentPage == 0
+                            ? 'Lướt sang trái để đăng ký →'
+                            : '← Lướt sang phải để đăng nhập',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Text(
-                    _currentPage == 0
-                        ? 'Lướt sang trái để đăng ký →'
-                        : '← Lướt sang phải để đăng nhập',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ],
@@ -248,7 +254,12 @@ class _CoffeeLoginRegisterScreenState extends State<CoffeeLoginRegisterScreen> {
                 password: _registerPassword.text,
                 photoURL: 'assets/images/drink/user.png',
                 rank: 'Hạng đồng',
+                point: 0,
               ),
+            );
+            await FirebaseDBManager.couponService.addSingleCouponCode(
+              _registerUsername.text,
+              generateCouponCode(),
             );
             showMessage("Đăng ký thành công");
             _registerUsername.text = '';

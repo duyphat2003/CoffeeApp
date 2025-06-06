@@ -1,5 +1,4 @@
 import 'package:coffeeapp/Entity/Product.dart';
-import 'package:coffeeapp/Entity/global_data.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/Entity/cartitem.dart';

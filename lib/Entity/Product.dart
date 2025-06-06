@@ -15,7 +15,7 @@ class Product {
   final String description;
   final double rating;
   final int reviewCount;
-  final double price;
+  late double price;
   final ProductType type;
 
   Product({

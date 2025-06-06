@@ -1,11 +1,8 @@
 import 'dart:ui';
 
-import 'package:coffeeapp/Entity/Product.dart';
-import 'package:coffeeapp/Entity/categoryproduct.dart';
 import 'package:coffeeapp/Entity/global_data.dart';
-import 'package:coffeeapp/Entity/orderitem.dart';
-import 'package:coffeeapp/Entity/productfavourite.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
+import 'package:coffeeapp/UI/User/userinformation.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/CustomCard/menuitem.dart';
 import 'package:coffeeapp/UI/Login_Register/coffeeloginregisterscreen.dart';
@@ -25,7 +22,6 @@ class _ProfileState extends State<Profile> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    LoadData();
   }
 
   Future<void> LoadData() async {
@@ -34,8 +30,20 @@ class _ProfileState extends State<Profile> {
     ))!;
   }
 
+  Map<String, String> ranks = {
+    'Hạng đồng': 'assets/images/rank/r1.png',
+    'Hạng bạc': 'assets/images/rank/r0.png',
+    'Hạng vàng': 'assets/images/rank/r2.png',
+    'Hạng kim cương xanh': 'assets/images/rank/r3.png',
+    'Hạng kim cương tím': 'assets/images/rank/r4.png',
+    'Hạng kim cương đỏ': 'assets/images/rank/r5.png',
+  };
+
   @override
   Widget build(BuildContext context) {
+    String imageRank = ranks.entries
+        .firstWhere((element) => element.key == GlobalData.userDetail.rank)
+        .value;
     return Scaffold(
       //backgroundColor: widget.isDark ? Colors.grey[800] : Colors.brown[400],
       backgroundColor: Colors.transparent,
@@ -75,13 +83,28 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                           SizedBox(height: 5),
-                          Text(
-                            GlobalData.userDetail.rank,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 0, 3, 180),
+                          Center(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  GlobalData.userDetail.rank,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 0, 3, 180),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Image.asset(
+                                  imageRank,
+                                  width: 35,
+                                  height: 35,
+                                  fit: BoxFit.cover,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -96,7 +119,20 @@ class _ProfileState extends State<Profile> {
                       child: Column(
                         children: [
                           // Information
-                          MenuItem(title: "Thông tin tài khoản"),
+                          MenuItem(
+                            title: "Thông tin tài khoản",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserInformation(
+                                    isDark: widget.isDark,
+                                    index: 2,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
 
                           // Cart
                           MenuItem(

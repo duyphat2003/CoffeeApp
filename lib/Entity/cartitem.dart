@@ -1,14 +1,17 @@
 import 'package:coffeeapp/Entity/Product.dart';
 
 class CartItem {
+  late String id;
   late String idOrder;
   final String productName;
+  late Product product;
   final SizeOption size;
   late int amount;
 
   CartItem({
     required this.idOrder,
     required this.productName,
+    required this.product,
     required this.amount,
     required this.size,
   });
@@ -18,6 +21,16 @@ class CartItem {
     productName: json['productName'],
     amount: json['amount'],
     size: stringToEnum(SizeOption.values, json['size']),
+    product: Product(
+      createDate: '',
+      name: '',
+      imageUrl: '',
+      description: '',
+      rating: 0,
+      reviewCount: 0,
+      price: 0,
+      type: ProductType.Coffee,
+    ),
   );
 
   Map<String, dynamic> toJson(String idOrder) => {

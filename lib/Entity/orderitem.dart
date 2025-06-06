@@ -6,16 +6,26 @@ class OrderItem {
   final String createDate;
   final String timeOrder;
   late StatusOrder statusOrder;
-  final List<CartItem> cartItems;
+  late List<CartItem> cartItems;
   final String email;
+  final String table;
+  final String phone;
+  final String name;
+  final String total;
+  final String coupon;
 
   OrderItem({
+    required this.table,
+    required this.phone,
+    required this.name,
     required this.id,
     required this.createDate,
     required this.timeOrder,
     required this.statusOrder,
     required this.email,
     required this.cartItems,
+    required this.total,
+    required this.coupon,
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
@@ -25,6 +35,11 @@ class OrderItem {
     statusOrder: stringToEnum(StatusOrder.values, json['statusOrder']),
     email: json['email'],
     cartItems: [],
+    table: json['table'],
+    phone: json['phone'],
+    name: json['name'],
+    total: json['total'],
+    coupon: json['coupon'],
   );
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +48,11 @@ class OrderItem {
     'timeOrder': timeOrder,
     'statusOrder': enumToString(statusOrder),
     'email': email,
+    'table': table,
+    'phone': phone,
+    'name': name,
+    'total': total,
+    'coupon': coupon,
   };
 }
 

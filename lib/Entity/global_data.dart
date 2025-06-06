@@ -1,10 +1,4 @@
-import 'package:coffeeapp/Entity/Product.dart';
-import 'package:coffeeapp/Entity/ads.dart';
 import 'package:coffeeapp/Entity/cartitem.dart';
-import 'package:coffeeapp/Entity/categoryproduct.dart';
-import 'package:coffeeapp/Entity/orderitem.dart';
-import 'package:coffeeapp/Entity/productfavourite.dart';
-import 'package:coffeeapp/Entity/tablestatus.dart';
 import 'package:coffeeapp/Entity/userdetail.dart';
 
 class GlobalData {
@@ -26,6 +20,7 @@ class GlobalData {
     password: '',
     photoURL: '',
     rank: '',
+    point: 0,
   );
 
   // Getter

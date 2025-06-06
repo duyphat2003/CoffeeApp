@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeeapp/Entity/Product.dart';
 import 'package:coffeeapp/FirebaseCloudDB/tableindatabase.dart';
+import 'package:flutter/material.dart';
 
 class ProductService {
   final CollectionReference _productRef = FirebaseFirestore.instance.collection(
@@ -17,22 +18,23 @@ class ProductService {
   }
 
   // READ - Single Product (optional)
-  Future<Product?> getProductByName(String name) async {
+  Future<Product> getProductByName(String name) async {
     try {
       final querySnapshot = await _productRef
           .where('name', isEqualTo: name)
           .limit(1)
           .get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        return Product.fromJson(
-          querySnapshot.docs.first.data() as Map<String, dynamic>,
-        );
+      if (querySnapshot.docs.isEmpty) {
+        throw Exception('Product with name "$name" not found');
       }
 
-      return null;
-    } catch (e) {
-      throw Exception('Failed to get product by name: $e');
+      final data = querySnapshot.docs.first.data();
+      return Product.fromJson(data as Map<String, dynamic>);
+    } catch (e, stackTrace) {
+      debugPrint('Error getting product by name: $e');
+      debugPrintStack(stackTrace: stackTrace);
+      rethrow; // or throw Exception('Failed to get product by name: $e');
     }
   }
 
