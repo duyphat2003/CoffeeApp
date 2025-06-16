@@ -31,6 +31,20 @@ class OrderService {
         .toList();
   }
 
+  // READ - Get all orders (Admin or general listing)
+  Future<List<OrderItem>> getAllOrders() async {
+    final snapshot = await _ordersRef.get();
+
+    if (snapshot.docs.isEmpty) {
+      print("No orders found in the database.");
+      return [];
+    }
+
+    return snapshot.docs
+        .map((doc) => OrderItem.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
+
   // UPDATE - Change status
   Future<void> updateOrderStatus(String id, StatusOrder newStatus) async {
     try {

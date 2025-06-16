@@ -93,13 +93,9 @@ class _CategoryState extends State<Category> {
                                               .trim() ==
                                           value.trim().toLowerCase(),
                                     )
-                                    .name
-                                    .toString()
-                                    .split('.')[1];
+                                    .name;
                               } else {
-                                typeSearch = categoriesSearch[0].name
-                                    .toString()
-                                    .split('.')[1];
+                                typeSearch = categoriesSearch[0].name;
                               }
 
                               controller.closeView(value);
@@ -221,9 +217,7 @@ class _CategoryState extends State<Category> {
                                                         .trim()
                                                         .toLowerCase(),
                                               )
-                                              .name
-                                              .toString()
-                                              .split('.')[1],
+                                              .name,
                                           isDark: widget.isDark,
                                           index: 1,
                                         ),

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:coffeeapp/UI/Login_Register/coffeeloginregisterscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _startDelay() async {
     log('Start');
 
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 5), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => CoffeeLoginRegisterScreen()),
@@ -69,7 +70,14 @@ class _SplashScreenState extends State<SplashScreen> {
                 _version,
                 style: TextStyle(fontSize: 16, color: Colors.white70),
               ),
-              Center(child: CircularProgressIndicator()),
+              Center(
+                child: Lottie.asset(
+                  'assets/background/loading.json', // Thay bằng đường dẫn đúng tới file Lottie của bạn
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ],
           ),
         ],

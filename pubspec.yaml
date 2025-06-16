@@ -28,6 +28,9 @@ dependencies:
   cloud_firestore: ^5.6.8
   flutter_slidable: ^4.0.0
   animate_gradient: ^0.0.3
+  lottie: ^3.3.1
+  syncfusion_flutter_charts: ^29.2.9
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +53,7 @@ flutter:
     - assets/images/drink/product8.jpg
     - assets/images/drink/product9.jpg
     - assets/images/drink/product10.jpg
+    - assets/images/drink/product11.jpg
     - assets/images/drink/category1.jpg
     - assets/images/drink/category2.jpg
     - assets/images/drink/category3.jpg
@@ -67,3 +71,10 @@ flutter:
     - assets/images/rank/r3.png
     - assets/images/rank/r4.png
     - assets/images/rank/r5.png
+    - assets/background/coffeeproductbackground.jpg
+    - assets/video/icons8-add-shopping-cart.gif
+    - assets/video/icons8-shopping-cart.gif
+    - assets/video/CoffeeFavourite.json
+    - assets/video/CoffeeRecommended.json
+    - assets/background/CoffeeTitle.json
+    - assets/background/loading.json

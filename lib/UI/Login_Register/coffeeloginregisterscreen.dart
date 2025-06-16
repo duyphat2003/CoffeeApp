@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:coffeeapp/CustomMethod/generateCouponCode.dart';
-import 'package:coffeeapp/Entity/coupon.dart';
 import 'package:coffeeapp/Entity/global_data.dart';
 import 'package:coffeeapp/Entity/userdetail.dart';
 import 'package:coffeeapp/FirebaseCloudDB/FirebaseDBManager.dart';
+import 'package:coffeeapp/Transition/menunavigationbar_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/Transition/menunavigationbar.dart';
 import 'package:video_player/video_player.dart';
@@ -104,17 +104,13 @@ class _CoffeeLoginRegisterScreenState extends State<CoffeeLoginRegisterScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 24.0),
-                      child: Center(
-                        child: Text(
-                          '☕ Cà phê Đậu Chill',
-                          style: TextStyle(
-                            fontSize: 32,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(color: Colors.black, blurRadius: 5),
-                            ],
-                          ),
+                      child: const Text(
+                        '☕ Cà phê Đậu Chill',
+                        style: TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          shadows: [Shadow(color: Colors.black, blurRadius: 5)],
                         ),
                       ),
                     ),
@@ -202,13 +198,22 @@ class _CoffeeLoginRegisterScreenState extends State<CoffeeLoginRegisterScreen> {
             _loginUsername.text = '';
             _loginPassword.text = '';
             Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    MenuNavigationBar(isDark: false, selectedIndex: 0),
-              ),
-            );
+            if (GlobalData.userDetail.rank == "Rank Admin") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MenuNavigationbarAdmin(),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MenuNavigationBar(isDark: false, selectedIndex: 0),
+                ),
+              );
+            }
           }),
         ],
       ),

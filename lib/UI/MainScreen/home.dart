@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:animate_gradient/animate_gradient.dart';
 import 'package:coffeeapp/Entity/ads.dart';
 import 'package:coffeeapp/Entity/categoryproduct.dart';
 import 'package:coffeeapp/Entity/productfavourite.dart';
@@ -10,10 +11,13 @@ import 'package:coffeeapp/Entity/Product.dart';
 import 'package:coffeeapp/Entity/global_data.dart';
 import 'package:coffeeapp/UI/Product/product_list.dart';
 import 'package:logger/logger.dart';
+import 'package:lottie/lottie.dart';
+import 'package:video_player/video_player.dart';
 
 // ignore: must_be_immutable
 class Home extends StatefulWidget {
   late bool isDark;
+
   final ValueChanged<bool> onDarkChanged;
 
   Home({required this.isDark, required this.onDarkChanged, super.key});
@@ -22,7 +26,9 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _iconAnimation;
   void toggleDarkMode() {
     setState(() {
       widget.isDark = !widget.isDark;
@@ -40,11 +46,40 @@ class _HomeState extends State<Home> {
   late List<Product> favouriteProduct = [];
   late List<Ads> ads = [];
   var logger = Logger();
+
+  // ignore: non_constant_identifier_names
+  void InitializeVideoPlayer(VideoPlayerController vpc, String pathVideo) {
+    vpc = VideoPlayerController.asset(pathVideo)
+      ..initialize().then((_) {
+        setState(() {});
+        vpc.setLooping(true);
+        vpc.setVolume(0);
+        vpc.play();
+      });
+  }
+
   @override
   void initState() {
     super.initState();
+
     indexCategory = 0;
-    // productsCategory = products.where((element) => element.type.toString(),);
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _iconAnimation = Tween<double>(
+      begin: -6,
+      end: 6,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
   }
 
   Future<void> LoadData() async {
@@ -78,6 +113,34 @@ class _HomeState extends State<Home> {
   Future<void> LoadProductWithCategory() async {
     productsCategory = await FirebaseDBManager.productService.getProductsByType(
       categories[indexCategory].name,
+    );
+  }
+
+  Widget _buildAnimatedTitle() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AnimatedBuilder(
+          animation: _iconAnimation,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(_iconAnimation.value, 0),
+              child: child,
+            );
+          },
+          child: const Icon(Icons.coffee, color: Colors.white, size: 26),
+        ),
+        const SizedBox(width: 8),
+        const Text(
+          'Những nước uống yêu thích của bạn',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.0,
+          ),
+        ),
+      ],
     );
   }
 
@@ -276,9 +339,7 @@ class _HomeState extends State<Home> {
                                 MaterialPageRoute(
                                   builder: (context) => ProductList(
                                     nameProduct: "",
-                                    productType: categories[indexCategory].name
-                                        .toString()
-                                        .split('.')[1],
+                                    productType: categories[indexCategory].name,
                                     isDark: widget.isDark,
                                     index: 0,
                                   ),
@@ -348,37 +409,24 @@ class _HomeState extends State<Home> {
                       /// PRODUCT LIST
                       SizedBox(
                         height: 244,
-                        child: ScrollConfiguration(
-                          behavior: ScrollConfiguration.of(context).copyWith(
-                            dragDevices: {
-                              PointerDeviceKind.touch,
-                              PointerDeviceKind.mouse,
-                            },
-                          ),
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: productsCategory.length,
-                            itemBuilder: (context, index) {
-                              final product = productsCategory[index];
-                              return ProductcardCategorymain(
-                                product: product,
-                                isDark: widget.isDark,
-                                index: 0,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      /// RECOMMENDED PRODUCT LIST
-                      Column(
-                        children: [
-                          Text("Những nước uống khuyến khích nên chọn"),
-                          SizedBox(height: 5),
-                          SizedBox(
-                            height: 400,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24), // Bo góc đẹp
+                          child: AnimateGradient(
+                            primaryBegin: Alignment.topLeft,
+                            primaryEnd: Alignment.bottomRight,
+                            secondaryBegin: Alignment.bottomRight,
+                            secondaryEnd: Alignment.topLeft,
+                            duration: const Duration(seconds: 6),
+                            primaryColors: const [
+                              Color(0xFF5D4037), // Coffee brown
+                              Color(0xFF8D6E63), // Milk coffee
+                              Color(0xFFA1887F), // Mocha
+                            ],
+                            secondaryColors: const [
+                              Color(0xFF4E342E), // Espresso
+                              Color(0xFF6D4C41), // Chocolate
+                              Color(0xFF795548), // Cinnamon brown
+                            ],
                             child: ScrollConfiguration(
                               behavior: ScrollConfiguration.of(context)
                                   .copyWith(
@@ -388,11 +436,11 @@ class _HomeState extends State<Home> {
                                     },
                                   ),
                               child: ListView.builder(
-                                itemCount: productTop10HighRatingList.length,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: productsCategory.length,
                                 itemBuilder: (context, index) {
-                                  final product =
-                                      productTop10HighRatingList[index];
-                                  return ProductcardRecommended(
+                                  final product = productsCategory[index];
+                                  return ProductcardCategorymain(
                                     product: product,
                                     isDark: widget.isDark,
                                     index: 0,
@@ -401,34 +449,190 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                           ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      /// RECOMMENDED PRODUCT LIST
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Custom title with animated MP4 icon
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  height: 80,
+                                  child: Lottie.asset(
+                                    'assets/video/CoffeeRecommended.json',
+                                    repeat: true,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  "Những nước uống khuyến nghị",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromARGB(255, 19, 212, 19),
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // AnimateGradient background container with rounded corners
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: SizedBox(
+                              height: 400,
+                              child: AnimateGradient(
+                                primaryBegin: Alignment.topLeft,
+                                primaryEnd: Alignment.bottomRight,
+                                secondaryBegin: Alignment.bottomLeft,
+                                secondaryEnd: Alignment.topRight,
+                                duration: const Duration(seconds: 6),
+                                primaryColors: const [
+                                  Color(0xFF5D4037), // Coffee brown
+                                  Color(0xFF8D6E63), // Milk coffee
+                                  Color(0xFFA1887F), // Mocha
+                                ],
+                                secondaryColors: const [
+                                  Color(0xFF4E342E), // Espresso
+                                  Color(0xFF6D4C41), // Chocolate
+                                  Color(0xFF795548), // Cinnamon brown
+                                ],
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 6,
+                                  ),
+                                  child: ScrollConfiguration(
+                                    behavior: ScrollConfiguration.of(context)
+                                        .copyWith(
+                                          dragDevices: {
+                                            PointerDeviceKind.touch,
+                                            PointerDeviceKind.mouse,
+                                          },
+                                        ),
+                                    child: ListView.builder(
+                                      itemCount:
+                                          productTop10HighRatingList.length,
+                                      itemBuilder: (context, index) {
+                                        final product =
+                                            productTop10HighRatingList[index];
+                                        return ProductcardRecommended(
+                                          product: product,
+                                          isDark: widget.isDark,
+                                          index: index,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
 
                       /// Favourite PRODUCT LIST
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Những nước uống mà bạn thích"),
-                          SizedBox(height: 5),
-                          SizedBox(
-                            height: 400,
-                            child: ScrollConfiguration(
-                              behavior: ScrollConfiguration.of(context)
-                                  .copyWith(
-                                    dragDevices: {
-                                      PointerDeviceKind.touch,
-                                      PointerDeviceKind.mouse,
-                                    },
+                          // CUSTOM TITLE WITH LOTTIE ICON
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  height: 80,
+                                  child: Lottie.asset(
+                                    'assets/video/CoffeeFavourite.json',
+                                    repeat: true,
+                                    fit: BoxFit.contain,
                                   ),
-                              child: ListView.builder(
-                                itemCount: favouriteProduct.length,
-                                itemBuilder: (context, index) {
-                                  final product = favouriteProduct[index];
-                                  return ProductcardRecommended(
-                                    product: product,
-                                    isDark: widget.isDark,
-                                    index: 0,
-                                  );
-                                },
+                                ),
+
+                                const SizedBox(width: 10),
+                                const Text(
+                                  "Đồ uống bạn yêu thích",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromARGB(255, 223, 20, 64),
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // PRODUCT LIST WITH ANIMATEGRADIENT BACKGROUND AND ROUNDED CONTAINER
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              20,
+                            ), // <- SOFT ROUND
+                            child: SizedBox(
+                              height: 400,
+                              child: AnimateGradient(
+                                primaryBegin: Alignment.topLeft,
+                                primaryEnd: Alignment.bottomRight,
+                                secondaryBegin: Alignment.bottomLeft,
+                                secondaryEnd: Alignment.topRight,
+                                duration: const Duration(seconds: 6),
+                                primaryColors: const [
+                                  Color(0xFF5D4037), // Coffee brown
+                                  Color(0xFF8D6E63), // Milk coffee
+                                  Color(0xFFA1887F), // Mocha
+                                ],
+                                secondaryColors: const [
+                                  Color(0xFF4E342E), // Espresso
+                                  Color(0xFF6D4C41), // Chocolate
+                                  Color(0xFF795548), // Cinnamon brown
+                                ],
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 6,
+                                  ),
+                                  child: ScrollConfiguration(
+                                    behavior: ScrollConfiguration.of(context)
+                                        .copyWith(
+                                          dragDevices: {
+                                            PointerDeviceKind.touch,
+                                            PointerDeviceKind.mouse,
+                                          },
+                                        ),
+                                    child: ListView.builder(
+                                      itemCount: favouriteProduct.length,
+                                      itemBuilder: (context, index) {
+                                        final product = favouriteProduct[index];
+                                        return ProductcardRecommended(
+                                          product: product,
+                                          isDark: widget.isDark,
+                                          index: index,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

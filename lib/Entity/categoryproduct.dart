@@ -1,9 +1,7 @@
-import 'package:coffeeapp/Entity/Product.dart';
-
 class CategoryProduct {
   final String id;
   final String createDate;
-  final ProductType name;
+  final String name;
   final String imageUrl;
   final String displayName;
 
@@ -19,7 +17,7 @@ class CategoryProduct {
       CategoryProduct(
         id: json['id'],
         createDate: json['createDate'],
-        name: stringToEnum(ProductType.values, json['name']),
+        name: json['name'],
         imageUrl: json['imageUrl'],
         displayName: json['displayName'],
       );
@@ -27,7 +25,7 @@ class CategoryProduct {
   Map<String, dynamic> toJson() => {
     'id': id,
     'createDate': createDate,
-    'name': enumToString(name),
+    'name': name,
     'imageUrl': imageUrl,
     'displayName': displayName,
   };

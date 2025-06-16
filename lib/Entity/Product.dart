@@ -2,8 +2,6 @@
 // ignore: file_names, constant_identifier_names
 // ignore_for_file: file_names, constant_identifier_names
 
-enum ProductType { Coffee, Tea, Juice, Soda, Water, Smoothies, EnergyDrinks }
-
 String enumToString(Object enumValue) => enumValue.toString().split('.').last;
 T stringToEnum<T>(List<T> values, String value) =>
     values.firstWhere((e) => enumToString(e!) == value);
@@ -16,7 +14,7 @@ class Product {
   final double rating;
   final int reviewCount;
   late double price;
-  final ProductType type;
+  final String type;
 
   Product({
     required this.createDate,
@@ -37,7 +35,7 @@ class Product {
     rating: (json['rating'] as num).toDouble(),
     reviewCount: json['reviewCount'],
     price: (json['price'] as num).toDouble(),
-    type: stringToEnum(ProductType.values, json['type']),
+    type: json['type'],
   );
 
   Map<String, dynamic> toJson() => {

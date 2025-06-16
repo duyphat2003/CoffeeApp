@@ -1,6 +1,8 @@
 // ignore: file_names
 // ignore_for_file: file_names, duplicate_ignore
 
+import 'package:animate_gradient/animate_gradient.dart';
+import 'package:coffeeapp/CustomCard/colorsetupbackground.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeapp/UI/MainScreen/category.dart';
 import 'package:coffeeapp/UI/MainScreen/home.dart';
@@ -56,8 +58,20 @@ class _MenuNavigationBarState extends State<MenuNavigationBar> {
       Center(child: Profile(isDark: widget.isDark)),
     ];
     return Scaffold(
-      backgroundColor: widget.isDark ? Colors.grey[800] : Colors.brown[400],
-      body: _pages[widget.selectedIndex],
+      body: AnimateGradient(
+        primaryBegin: Alignment.topLeft,
+        primaryEnd: Alignment.bottomRight,
+        secondaryBegin: Alignment.bottomRight,
+        secondaryEnd: Alignment.topLeft,
+        duration: const Duration(seconds: 6),
+        primaryColors: widget.isDark
+            ? ColorSetupBackground.primaryColorsDark
+            : ColorSetupBackground.primaryColorsLight,
+        secondaryColors: widget.isDark
+            ? ColorSetupBackground.secondaryColorsDark
+            : ColorSetupBackground.secondaryColorsLight,
+        child: _pages[widget.selectedIndex],
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
         child: ClipRRect(

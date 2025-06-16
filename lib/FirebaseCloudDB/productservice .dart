@@ -39,10 +39,8 @@ class ProductService {
   }
 
   // READ - All Products CATEGORY
-  Future<List<Product>> getProductsByType(ProductType type) async {
-    final snapshot = await _productRef
-        .where('type', isEqualTo: enumToString(type))
-        .get();
+  Future<List<Product>> getProductsByType(String type) async {
+    final snapshot = await _productRef.where('type', isEqualTo: type).get();
 
     if (snapshot.docs.isEmpty) {
       print("No products found for type: ${enumToString(type)}");
@@ -118,20 +116,34 @@ class ProductService {
   }
 
   // UPDATE
-  Future<void> updateProduct(String id, Product product) async {
+  Future<void> updateProductByName(String name, Product product) async {
     try {
-      await _productRef.doc(id).update(product.toJson());
+      final snapshot = await _productRef
+          .where('name', isEqualTo: name)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final docRef = snapshot.docs.first.reference;
+        await docRef.update(product.toJson());
+      } else {
+        throw Exception('Product with name "$name" not found.');
+      }
     } catch (e) {
       throw Exception('Failed to update product: $e');
     }
   }
 
   // DELETE
-  Future<void> deleteProduct(String id) async {
+  Future<void> deleteProductByName(String name) async {
     try {
-      await _productRef.doc(id).delete();
+      final snapshot = await _productRef.where('name', isEqualTo: name).get();
+
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
     } catch (e) {
-      throw Exception('Failed to delete product: $e');
+      throw Exception('Failed to delete product(s) with name "$name": $e');
     }
   }
 }

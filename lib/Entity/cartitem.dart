@@ -29,7 +29,7 @@ class CartItem {
       rating: 0,
       reviewCount: 0,
       price: 0,
-      type: ProductType.Coffee,
+      type: "Cà phê",
     ),
   );
 

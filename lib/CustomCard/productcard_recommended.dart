@@ -29,8 +29,18 @@ class _ProductcardRecommendedState extends State<ProductcardRecommended> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(2.5),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: widget.isDark
+              ? [Colors.grey.shade800, Colors.grey.shade700]
+              : [Colors.blue.shade50, Colors.white],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+
       child: Card(
-        color: Colors.blueGrey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 3,
         child: Padding(
